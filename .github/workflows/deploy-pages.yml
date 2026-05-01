@@ -23,16 +23,32 @@ jobs:
       - name: Enable web support
         run: flutter config --enable-web
 
+      - name: Ensure web platform files exist
+        run: flutter create --platforms=web .
+
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Flutter doctor
+        run: flutter doctor -v
 
       - name: Extract repo name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
       - name: Build web
-        run: flutter build web --release --base-href "/${REPO_NAME}/"
+        run: |
+          set -o pipefail
+          flutter build web --release --base-href "/${REPO_NAME}/" --verbose 2>&1 | tee flutter-build-web.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-build-log
+          path: flutter-build-web.log
 
       - name: Deploy to gh-pages branch
+        if: success()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
