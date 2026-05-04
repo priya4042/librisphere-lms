@@ -270,7 +270,7 @@ class _ReportsTabState extends State<ReportsTab> {
                                   ),
                                 ),
                                 FractionallySizedBox(
-                                  widthFactor: ratio.clamp(0.0, 1.0),
+                                  widthFactor: ratio.clamp(0.0, 1.0).toDouble(),
                                   child: Container(
                                     height: 20,
                                     decoration: BoxDecoration(
