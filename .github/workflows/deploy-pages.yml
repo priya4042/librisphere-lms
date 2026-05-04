@@ -38,7 +38,8 @@ jobs:
       - name: Build web
         run: |
           set -o pipefail
-          flutter build web --release --base-href "/${REPO_NAME}/" --verbose 2>&1 | tee flutter-build-web.log
+          flutter build web --release --verbose 2>&1 | tee flutter-build-web.log
+          sed -i "s|<base href=\"/\">|<base href=\"/${REPO_NAME}/\">|" build/web/index.html
 
       - name: Upload build log
         if: always()
