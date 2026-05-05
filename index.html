@@ -1,23 +1,46 @@
-﻿<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LibriSphere LMS</title>
-  <style>
-    body { font-family: Segoe UI, Arial, sans-serif; margin: 0; background:#f6f8fb; color:#1b2430; }
-    .wrap { max-width: 760px; margin: 10vh auto; background:white; border:1px solid #dde3ea; border-radius:14px; padding:28px; }
-    h1 { margin-top:0; }
-    code { background:#eef2f7; padding:2px 6px; border-radius:6px; }
-    a { color:#0b66c3; }
-  </style>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/librisphere-lms/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="lms">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>lms</title>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <div class="wrap">
-    <h1>LibriSphere LMS is being published</h1>
-    <p>The GitHub Pages endpoint is now active. The full Flutter web app deployment is in progress.</p>
-    <p>Repo: <a href="https://github.com/priya4042/librisphere-lms">github.com/priya4042/librisphere-lms</a></p>
-    <p>If this page persists, open <code>Actions</code> in the repo and rerun the workflow <code>Deploy Flutter Web to GitHub Pages</code>.</p>
-  </div>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
