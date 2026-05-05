@@ -805,7 +805,7 @@ class LibraryProvider extends ChangeNotifier {
       return false;
     }
     final bool used =
-        _acquisitions.any((Acquisition acquisition) => acquisition.vendor == vendor.name);
+        _acquisitions.any((Acquisition acquisition) => acquisition.vendor == vendor!.name);
     if (used) {
       return false;
     }

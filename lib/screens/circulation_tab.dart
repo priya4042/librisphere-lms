@@ -5,6 +5,7 @@ import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 import '../models/book.dart';
+import '../models/book_copy.dart';
 import '../models/borrow_record.dart';
 import '../models/member.dart';
 import '../providers/library_provider.dart';
