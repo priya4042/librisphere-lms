@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../models/book.dart';
 import '../models/book_copy.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class CopiesTab extends StatefulWidget {
   const CopiesTab({super.key});
@@ -36,26 +38,30 @@ class _CopiesTabState extends State<CopiesTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Copy Inventory', style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final String csv = provider.exportCopiesCsv();
-                  await Clipboard.setData(ClipboardData(text: csv));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Copy inventory CSV copied to clipboard.')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.copy_all),
-                label: const Text('Copy CSV'),
-              ),
-              const SizedBox(width: 8),
-              Text('Tracked: ${provider.totalCopiesTracked}'),
-            ],
+          TabHeader(
+            title: 'Copy Inventory',
+            icon: Icons.library_books_outlined,
+            subtitle: 'Accession-level visibility and shelf movement',
+            trailing: Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final String csv = provider.exportCopiesCsv();
+                    await Clipboard.setData(ClipboardData(text: csv));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Copy inventory CSV copied to clipboard.')),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.copy_all),
+                  label: const Text('Copy CSV'),
+                ),
+                Text('Tracked: ${provider.totalCopiesTracked}'),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -112,7 +118,11 @@ class _CopiesTabState extends State<CopiesTab> {
           const SizedBox(height: 12),
           Expanded(
             child: copies.isEmpty
-                ? const Center(child: Text('No copies found for current filters.'))
+                    ? const LuxuryEmptyState(
+                        title: 'No Copies Match Filters',
+                        message: 'Try changing filters or add accession copies for your titles.',
+                        icon: Icons.library_books_outlined,
+                      )
                 : ListView.builder(
                     itemCount: copies.length,
                     itemBuilder: (BuildContext context, int index) {

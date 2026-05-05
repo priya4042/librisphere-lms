@@ -6,6 +6,7 @@ import '../models/book.dart';
 import '../models/borrow_record.dart';
 import '../models/member.dart';
 import '../providers/library_provider.dart';
+import '../widgets/tab_header.dart';
 
 class NotificationsTab extends StatelessWidget {
   const NotificationsTab({super.key});
@@ -45,9 +46,11 @@ class NotificationsTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: <Widget>[
-        Text(
-          'Notifications',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+        TabHeader(
+          title: 'Notifications',
+          icon: Icons.notifications_active_outlined,
+          subtitle: 'Live alerts for circulation, stock, and policy actions',
+          trailing: Text('Alerts: ${overdueRecords.length + dueSoonRecords.length + pendingApprovals}'),
         ),
         const SizedBox(height: 12),
 

@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../models/audit_log.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class AdminTab extends StatefulWidget {
   const AdminTab({super.key});
@@ -67,24 +69,23 @@ class _AdminTabState extends State<AdminTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Audit Logs', style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final String csv = provider.exportAuditCsv();
-                  await Clipboard.setData(ClipboardData(text: csv));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Audit CSV copied to clipboard.')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.copy_all),
-                label: const Text('Copy CSV'),
-              ),
-            ],
+          TabHeader(
+            title: 'Audit Logs',
+            icon: Icons.admin_panel_settings_outlined,
+            subtitle: 'Administrative traceability and governance events',
+            trailing: OutlinedButton.icon(
+              onPressed: () async {
+                final String csv = provider.exportAuditCsv();
+                await Clipboard.setData(ClipboardData(text: csv));
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Audit CSV copied to clipboard.')),
+                  );
+                }
+              },
+              icon: const Icon(Icons.copy_all),
+              label: const Text('Copy CSV'),
+            ),
           ),
           const SizedBox(height: 10),
           Row(
@@ -185,7 +186,11 @@ class _AdminTabState extends State<AdminTab> {
           const SizedBox(height: 12),
           Expanded(
             child: logs.isEmpty
-                ? const Center(child: Text('No audit entries for current filters.'))
+                    ? const LuxuryEmptyState(
+                        title: 'No Audit Entries',
+                        message: 'No admin activity matches the current filters.',
+                        icon: Icons.admin_panel_settings_outlined,
+                      )
                 : ListView.builder(
                     itemCount: logs.length,
                     itemBuilder: (BuildContext context, int index) {

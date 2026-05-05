@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../models/member.dart';
 import '../providers/library_provider.dart';
+import '../widgets/interactive_card.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class MembersTab extends StatefulWidget {
   const MembersTab({super.key});
@@ -31,6 +34,15 @@ class _MembersTabState extends State<MembersTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
+          TabHeader(
+            title: 'Members',
+            icon: Icons.people_outline,
+            subtitle: 'Directory, membership health, and activity overview',
+            trailing: Text(
+              '${members.length} records',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
@@ -77,14 +89,18 @@ class _MembersTabState extends State<MembersTab> {
           const SizedBox(height: 16),
           Expanded(
             child: members.isEmpty
-                ? const Center(child: Text('No members available.'))
+                ? const LuxuryEmptyState(
+                    title: 'No Members Yet',
+                    message: 'Add your first member record to start circulation tracking.',
+                    icon: Icons.people_outline,
+                  )
                 : ListView.builder(
                     itemCount: members.length,
                     itemBuilder: (BuildContext context, int index) {
                       final Member member = members[index];
                       final int activeCount = provider.activeIssuedCountForMember(member.id);
                       final int totalCount = provider.totalBorrowCountForMember(member.id);
-                      return Card(
+                      return InteractiveCard(
                         child: ListTile(
                           leading: CircleAvatar(
                             child: Text(

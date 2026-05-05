@@ -8,6 +8,9 @@ import '../models/book.dart';
 import '../models/borrow_record.dart';
 import '../models/member.dart';
 import '../providers/library_provider.dart';
+import '../widgets/staggered_reveal.dart';
+import '../widgets/animated_gradient_panel.dart';
+import '../widgets/tab_header.dart';
 
 class ReportsTab extends StatefulWidget {
   const ReportsTab({super.key});
@@ -70,9 +73,11 @@ class _ReportsTabState extends State<ReportsTab> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: <Widget>[
-        Text(
-          'Analytics & Reports',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+        TabHeader(
+          title: 'Analytics & Reports',
+          icon: Icons.analytics_outlined,
+          subtitle: 'Operational intelligence and export-ready summaries',
+          trailing: Text('Records: ${scoped.length}'),
         ),
         const SizedBox(height: 12),
         Card(
@@ -134,31 +139,28 @@ class _ReportsTabState extends State<ReportsTab> {
           ),
         ),
         const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Collection Summary', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
-                Text('Total books issued: ${scoped.length}'),
-                Text('Active issues: $activeIssues'),
-                Text('Completed returns: $completed'),
-                Text('Overdue now: $overdue'),
-                Text('Due today: ${provider.dueTodayCount}'),
-                Text('Due within 3 days: ${provider.dueSoonCount}'),
-                Text('Reservations in queue: ${provider.totalReservations}'),
-                Text('Acquisition spend: Rs ${provider.acquisitionSpend.toStringAsFixed(2)}'),
-                Text('Registered vendors: ${provider.vendorCount}'),
-                Text('Tracked copies: ${provider.totalCopiesTracked} | Issued copies: ${provider.issuedCopiesTracked}'),
-                Text('Pending penalty approvals: ${provider.pendingPenaltyApprovals}'),
-                Text('Damaged copies: ${provider.damagedCopiesCount} | Lost copies: ${provider.lostCopiesCount}'),
-                const SizedBox(height: 6),
-                Text('Fine collected: Rs ${fineCollected.toStringAsFixed(2)}'),
-                Text('Fine outstanding: Rs ${fineOutstanding.toStringAsFixed(2)}'),
-              ],
-            ),
+        AnimatedGradientPanel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Collection Summary', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              Text('Total books issued: ${scoped.length}'),
+              Text('Active issues: $activeIssues'),
+              Text('Completed returns: $completed'),
+              Text('Overdue now: $overdue'),
+              Text('Due today: ${provider.dueTodayCount}'),
+              Text('Due within 3 days: ${provider.dueSoonCount}'),
+              Text('Reservations in queue: ${provider.totalReservations}'),
+              Text('Acquisition spend: Rs ${provider.acquisitionSpend.toStringAsFixed(2)}'),
+              Text('Registered vendors: ${provider.vendorCount}'),
+              Text('Tracked copies: ${provider.totalCopiesTracked} | Issued copies: ${provider.issuedCopiesTracked}'),
+              Text('Pending penalty approvals: ${provider.pendingPenaltyApprovals}'),
+              Text('Damaged copies: ${provider.damagedCopiesCount} | Lost copies: ${provider.lostCopiesCount}'),
+              const SizedBox(height: 6),
+              Text('Fine collected: Rs ${fineCollected.toStringAsFixed(2)}'),
+              Text('Fine outstanding: Rs ${fineOutstanding.toStringAsFixed(2)}'),
+            ],
           ),
         ),
         const SizedBox(height: 12),
@@ -395,7 +397,11 @@ class _ReportsTabState extends State<ReportsTab> {
             ),
           ),
         ),
-      ],
+      ]
+          .asMap()
+          .entries
+          .map((MapEntry<int, Widget> entry) => StaggeredReveal(index: entry.key, child: entry.value))
+          .toList(),
     );
   }
 }

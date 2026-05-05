@@ -95,9 +95,47 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: provider.isReady
-          ? _tabs[_selectedIndex]
-          : const Center(child: CircularProgressIndicator()),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              Color(0xFFEAF5FA),
+              Color(0xFFF7FAFC),
+              Color(0xFFF4F7FB),
+            ],
+          ),
+        ),
+        child: provider.isReady
+            ? Column(
+                children: <Widget>[
+                  _KpiStrip(provider: provider),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 360),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (Widget child, Animation<double> animation) {
+                        final Animation<Offset> slide = Tween<Offset>(
+                          begin: const Offset(0.03, 0),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(position: slide, child: child),
+                        );
+                      },
+                      child: KeyedSubtree(
+                        key: ValueKey<int>(_selectedIndex),
+                        child: _tabs[_selectedIndex],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const Center(child: CircularProgressIndicator()),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (int index) {
@@ -501,6 +539,80 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         );
       },
+    );
+  }
+}
+
+class _KpiStrip extends StatelessWidget {
+  const _KpiStrip({required this.provider});
+
+  final LibraryProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOutCubic,
+      builder: (BuildContext context, double value, Widget? child) {
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(
+            offset: Offset(0, -8 * (1 - value)),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 6),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[Color(0xFF0B7285), Color(0xFF1D4E89)],
+          ),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: const Color(0xFF0B7285).withOpacity(0.25),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: <Widget>[
+            const Icon(Icons.auto_awesome, color: Colors.white),
+            const SizedBox(width: 8),
+            const Text(
+              'Live Library Pulse',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+            ),
+            const Spacer(),
+            _chip('Issued ${provider.borrowedCount}'),
+            const SizedBox(width: 6),
+            _chip('Overdue ${provider.overdueCount}'),
+            const SizedBox(width: 6),
+            _chip('Members ${provider.totalMembers}'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _chip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.16),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+      ),
     );
   }
 }

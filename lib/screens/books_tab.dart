@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../models/book.dart';
 import '../providers/library_provider.dart';
+import '../widgets/interactive_card.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 enum BookSort { title, available, popularity, waitlist }
 
@@ -55,6 +58,15 @@ class _BooksTabState extends State<BooksTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
+          TabHeader(
+            title: 'Books Catalog',
+            icon: Icons.menu_book_outlined,
+            subtitle: 'Manage titles, metadata, and inventory quality',
+            trailing: Text(
+              '${books.length} results',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
@@ -151,14 +163,18 @@ class _BooksTabState extends State<BooksTab> {
           const SizedBox(height: 12),
           Expanded(
             child: books.isEmpty
-                ? const Center(child: Text('No books found.'))
+                ? const LuxuryEmptyState(
+                    title: 'No Books Found',
+                    message: 'Try a different keyword or add a new title to begin.',
+                    icon: Icons.menu_book_outlined,
+                  )
                 : ListView.builder(
                     itemCount: books.length,
                     itemBuilder: (BuildContext context, int index) {
                       final Book book = books[index];
                       final int issuedTimes = provider.totalBorrowCountForBook(book.id);
                       final int waitlistCount = provider.waitlistCountForBook(book.id);
-                      return Card(
+                      return InteractiveCard(
                         child: ListTile(
                           title: Text(book.title),
                           subtitle: Text(

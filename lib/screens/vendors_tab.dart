@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../models/vendor.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class VendorsTab extends StatefulWidget {
   const VendorsTab({super.key});
@@ -30,10 +32,14 @@ class _VendorsTabState extends State<VendorsTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Vendors', style: Theme.of(context).textTheme.titleLarge),
-            ],
+          TabHeader(
+            title: 'Vendors',
+            icon: Icons.storefront_outlined,
+            subtitle: 'Supplier relationships and procurement readiness',
+            trailing: Text(
+              '${vendors.length} vendors',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -89,7 +95,11 @@ class _VendorsTabState extends State<VendorsTab> {
           const SizedBox(height: 12),
           Expanded(
             child: vendors.isEmpty
-                ? const Center(child: Text('No vendors found.'))
+                ? const LuxuryEmptyState(
+                    title: 'No Vendors Found',
+                    message: 'Add supplier profiles to manage acquisitions and procurement.',
+                    icon: Icons.storefront_outlined,
+                  )
                 : ListView.builder(
                     itemCount: vendors.length,
                     itemBuilder: (BuildContext context, int index) {

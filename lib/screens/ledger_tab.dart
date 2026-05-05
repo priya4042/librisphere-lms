@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../models/member.dart';
 import '../models/member_ledger_entry.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class LedgerTab extends StatefulWidget {
   const LedgerTab({super.key});
@@ -41,26 +43,30 @@ class _LedgerTabState extends State<LedgerTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Member Ledger', style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              OutlinedButton.icon(
-                onPressed: () async {
-                  final String csv = provider.exportLedgerCsv(memberId: memberId);
-                  await Clipboard.setData(ClipboardData(text: csv));
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Ledger CSV copied to clipboard.')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.copy_all),
-                label: const Text('Ledger CSV'),
-              ),
-              const SizedBox(width: 8),
-              Text('Pending approvals: ${provider.pendingPenaltyApprovals}'),
-            ],
+          TabHeader(
+            title: 'Member Ledger',
+            icon: Icons.account_balance_wallet_outlined,
+            subtitle: 'Penalties, payments, waivers, and approvals',
+            trailing: Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final String csv = provider.exportLedgerCsv(memberId: memberId);
+                    await Clipboard.setData(ClipboardData(text: csv));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Ledger CSV copied to clipboard.')),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.copy_all),
+                  label: const Text('Ledger CSV'),
+                ),
+                Text('Pending: ${provider.pendingPenaltyApprovals}'),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -138,7 +144,11 @@ class _LedgerTabState extends State<LedgerTab> {
           const SizedBox(height: 12),
           Expanded(
             child: entries.isEmpty
-                ? const Center(child: Text('No ledger entries for selected member.'))
+                    ? const LuxuryEmptyState(
+                        title: 'No Ledger Entries',
+                        message: 'Select a member with financial activity or add a new ledger entry.',
+                        icon: Icons.account_balance_wallet_outlined,
+                      )
                 : ListView.builder(
                     itemCount: entries.length,
                     itemBuilder: (BuildContext context, int index) {

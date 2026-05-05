@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../models/acquisition.dart';
 import '../models/book.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 class AcquisitionsTab extends StatelessWidget {
   const AcquisitionsTab({super.key});
@@ -17,18 +19,17 @@ class AcquisitionsTab extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text('Acquisitions', style: Theme.of(context).textTheme.titleLarge),
-              const Spacer(),
-              FilledButton.icon(
-                onPressed: provider.canManageBooks
-                    ? () => _showAcquisitionDialog(context, provider)
-                    : null,
-                icon: const Icon(Icons.add_business),
-                label: const Text('Add Procurement'),
-              ),
-            ],
+          TabHeader(
+            title: 'Acquisitions',
+            icon: Icons.local_shipping_outlined,
+            subtitle: 'Procurement pipeline and spend visibility',
+            trailing: FilledButton.icon(
+              onPressed: provider.canManageBooks
+                  ? () => _showAcquisitionDialog(context, provider)
+                  : null,
+              icon: const Icon(Icons.add_business),
+              label: const Text('Add Procurement'),
+            ),
           ),
           const SizedBox(height: 12),
           Card(
@@ -41,7 +42,11 @@ class AcquisitionsTab extends StatelessWidget {
           const SizedBox(height: 12),
           Expanded(
             child: provider.acquisitions.isEmpty
-                ? const Center(child: Text('No acquisitions recorded yet.'))
+              ? const LuxuryEmptyState(
+                title: 'No Acquisitions Yet',
+                message: 'Record incoming purchases to track stock and spending.',
+                icon: Icons.local_shipping_outlined,
+                )
                 : ListView.builder(
                     itemCount: provider.acquisitions.length,
                     itemBuilder: (BuildContext context, int index) {

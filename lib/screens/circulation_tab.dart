@@ -9,6 +9,8 @@ import '../models/book_copy.dart';
 import '../models/borrow_record.dart';
 import '../models/member.dart';
 import '../providers/library_provider.dart';
+import '../widgets/luxury_empty_state.dart';
+import '../widgets/tab_header.dart';
 
 enum RecordFilter { active, overdue, returned, all }
 
@@ -63,6 +65,15 @@ class _CirculationTabState extends State<CirculationTab> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
+          TabHeader(
+            title: 'Circulation Desk',
+            icon: Icons.swap_horiz,
+            subtitle: 'Issue, return, renew, and monitor queue operations',
+            trailing: Text(
+              '${records.length} records',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
           // Quick Scan / Accession Return Panel
           if (provider.canManageCirculation)
             Card(
@@ -200,7 +211,11 @@ class _CirculationTabState extends State<CirculationTab> {
           const SizedBox(height: 12),
           Expanded(
             child: records.isEmpty
-                ? const Center(child: Text('No records found.'))
+                ? const LuxuryEmptyState(
+                    title: 'No Circulation Records',
+                    message: 'Issue a book or clear filters to view circulation activity.',
+                    icon: Icons.swap_horiz,
+                  )
                 : ListView.builder(
                     itemCount: records.length,
                     itemBuilder: (BuildContext context, int index) {
