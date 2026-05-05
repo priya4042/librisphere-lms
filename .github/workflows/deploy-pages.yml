@@ -36,32 +36,10 @@ jobs:
         run: echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
 
       - name: Build web
-        id: build_web
-        continue-on-error: true
         run: |
           set -o pipefail
           flutter build web --release --verbose 2>&1 | tee flutter-build-web.log
           sed -i "s|<base href=\"/\">|<base href=\"/${REPO_NAME}/\">|" build/web/index.html
-
-      - name: Report build errors
-        if: steps.build_web.outcome == 'failure'
-        run: |
-          echo "### Flutter web build failed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "First relevant error lines:" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          grep -E "(^[[:space:]]*Error:|\.dart:[0-9]+:[0-9]+:|Unhandled exception:)" flutter-build-web.log | head -n 40 | tee build-error-snippet.log
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          if [ -s build-error-snippet.log ]; then
-            while IFS= read -r line; do
-              echo "::error::$line"
-            done < build-error-snippet.log
-          else
-            tail -n 80 flutter-build-web.log | tee tail-build.log
-            while IFS= read -r line; do
-              echo "::error::$line"
-            done < tail-build.log
-          fi
 
       - name: Upload build log
         if: always()
@@ -71,13 +49,8 @@ jobs:
           path: flutter-build-web.log
 
       - name: Deploy to gh-pages branch
-        if: steps.build_web.outcome == 'success'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build/web
           publish_branch: gh-pages
-
-      - name: Fail workflow if build failed
-        if: steps.build_web.outcome == 'failure'
-        run: exit 1
